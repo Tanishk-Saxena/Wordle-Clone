@@ -31,9 +31,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentWordArr = getCurrentWordArr();
     if(currentWordArr && currentWordArr.length < 5){
       currentWordArr.push(letter);
-      const availableSpacEl = document.getElementById(String(availableSpace));
+      const availableSpaceEl = document.getElementById(String(availableSpace));
       availableSpace = availableSpace + 1;
-      availableSpacEl.textContent = letter;
+      availableSpaceEl.textContent = letter;
+    }
+  }
+
+  function getTileColor(letter, index){
+    const isCorrectLetter = word.includes(letter);
+
+    if(!isCorrectLetter){
+      return "rgb(58, 58, 60)";
+    }
+
+    const letterInThatPosition = word.charAt(index);
+    const isCorrectPosition = (letter === letterInThatPosition);
+
+    if(isCorrectPosition){
+      return "rgb(83, 141, 78)";
+    }
+
+    else{
+      return "rgb(181, 159, 59)";
     }
   }
 
@@ -47,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const interval = 200;
     currentWordArr.forEach((letter, index) => {
       setTimeout(() => {
-        const tileColor = "rgb(58, 58, 60)";
+        const tileColor = getTileColor(letter, index);
         const letterId = firstLetterId + index;
         const letterEl = document.getElementById(letterId);
         letterEl.classList.add("animate__flipInX");
@@ -65,6 +84,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   }
 
+  function handleDeleteLetter () {
+    const currentWordArr = getCurrentWordArr();
+    const removedLetter = currentWordArr.pop();
+    guessedWords[guessedWords.length-1] = currentWordArr;
+    const lastLetterEl = document.getElementById(String(availableSpace-1));
+    lastLetterEl.textContent = "";
+    availableSpace -= 1;
+  }
+
   for (var i = 0; i < keys.length; i++) {
     keys[i].onclick = ({target}) => {
       const letter = target.getAttribute("data-key");
@@ -72,6 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if(letter === "enter"){
         handleSubmitWord();
+        return;
+      }
+      if(letter === "del"){
+        handleDeleteLetter();
         return;
       }
 
